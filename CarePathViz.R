@@ -26,11 +26,9 @@ TopCarePaths <- as.data.frame(as.matrix(TopCarePaths),stringsAsFactors = F)
 
 # Looker name and data type clean up --------------------------------------------------------
 # Renaming CarePaths Sanely
-# how do i do this as a loop?
+# how to find table names rather than naming them explicitly
 
-names(TopCarePaths) <- gsub("care_cards.", "", names(TopCarePaths), fixed = TRUE)
-names(TopCarePaths) <- gsub("patient_information.", "", names(TopCarePaths), fixed = TRUE)
-names(TopCarePaths) <- gsub("organization_tree.", "", names(TopCarePaths), fixed = TRUE)
+names(TopCarePaths) <- gsub("care_cards\\.|patient_information\\.|organization_tree\\.", "",names(TopCarePaths))
 
 # Changing Factors to Numerics (Do this for all measures or the calculations won't work)
 
