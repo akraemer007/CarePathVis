@@ -46,9 +46,6 @@ TopCarePaths$is_form <- factor(TopCarePaths$is_form, levels = c('No','Yes'))
 
 # Original Joining & cleaning --------------------------------------------------------
 TopCarePaths <- TopCarePaths %>%
-  left_join(ManualTagRef) %>%
-  left_join(FunctionalComponentTbl) %>%
-  # , by = c("title_full","CareCardName")
   mutate(CardForm = ifelse(is_form=='Yes','Form','CareCard'),
          organization_parent_name = substr(organization_parent_name,0,20),
          organization_parent_name = ifelse( organization_parent_name == 'Avera McKennan Hospi', 'Avera',
@@ -97,45 +94,7 @@ TopCarePaths.Req <- TopCarePaths %>%
   ) %>%
   arrange(guide_item_rank)
 
-table(TopCarePaths.Req$organization_parent_name)
-
-ggplot( TopCarePaths.Req, aes( x = PrePostFlag, fill = CardForm ) )+
-  geom_bar() +
-  facet_wrap( ~organization_parent_name ) +
-  ggtitle( 'Faceted, Cards vs Forms by Pre / Post' ) +
-  theme_bw()
-
-ggplot( TopCarePaths.Req, aes( x = FunctionalComponent ) ) +
-  geom_bar() +
-  facet_wrap( ~organization_parent_name ) +
-  ggtitle( 'Count Cards per Functional Component' ) +
-  theme_bw() +
-  scale_y_continuous( breaks = 1:100 ) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-ggplot(TopCarePaths.Req,aes(x = guide_item_rank_num, y = total.completed_sum/total.completed_and_expired_sum))+
-  geom_point( aes( shape = PrePostFlag, color = is_form, size = 3 ) ) +
-  # geom_text( aes( label = guide_item_rank_num ), hjust = 0, vjust = 0 ) +
-  facet_grid( organization_parent_name~. ) +
-  ggtitle('Faceted, Pre post Guide Item by Rank') +
-  ylab('Completion %') +
-  # scale_x_continuous( limits = c( 1, 100 ), breaks = seq( 1, 100, 10)) +
-  guides( size = FALSE ) +
-  theme_bw() +
-  xlab( 'CareCard Rank' )
-
-ggplot(TopCarePaths.Req,aes(x = guide_item_rank_num, y = total.completed_sum/total.completed_and_expired_sum))+
-  geom_point( aes( shape = PrePostFlag, color = FunctionalComponent , size = 3 ) ) +
-  # geom_text( aes( label = guide_item_rank_num ), hjust = 0, vjust = 0 ) +
-  facet_grid( organization_parent_name~. ) +
-  ggtitle('Faceted, Pre post Guide Item by Rank -- Functional Components') +
-  ylab('Completion %') +
-  # scale_x_continuous( limits = c( 1, 100 ), breaks = seq( 1, 100, 10)) +
-  guides( size = FALSE ) +
-  theme_bw() +
-  xlab( 'CareCard Rank' )
-
-# Req Card Offset view --------------------------------------------------------
+# Visualization --------------------------------------------------------
 
 ggplot(TopCarePaths.Req,aes(x = calc_appears_offset, y = total.completed_sum/total.completed_and_expired_sum, text = paste("Title:", title_full) ) )+
   geom_point( aes( shape = is_form,  color = PrePostFlag ) , alpha = 2/5, size = 5) + #dimensions of CarePath
@@ -188,32 +147,5 @@ ggplot(TopCarePaths.Req,aes(x = calc_appears_offset, y = total.view_count_sum, t
   ylab('Completed Sum') +
   xlab( 'Days Appears Offset from Surgery' )
 ggplotly()  
-# What is the most popular non-required card ----------------------------------------
 
-TopCarePaths.NotReq <- TopCarePaths %>%  
-  filter( required == "No", conditional_tag == "No" ) %>%
-  group_by(guide_item_id,
-           organization_parent_name,
-           title_full)%>%
-  summarise(total.completed_sum = sum(completed_sum),
-            total.completed_and_expired_sum = sum(completed_and_expired_sum),
-            total.view_count_sum = sum(view_count_sum),
-            total.unique_view_count_sum = sum(unique_view_count),
-            total.pcp = sum(patient_care_path_count)
-            # , count.pcp = n() figure out how to get a functional better count of pcp Looker says total PCP is 1855 for these clients
-  )
-
-TopCarePaths.NotReq %>%
-  filter( organization_parent_name == "Avera McKennan Hospi" ) %>%
-  group_by( title_full ) %>%
-  summarise( total.unique_view_count_sum ) %>%
-  arrange( desc( total.unique_view_count_sum ) )
-
-
-ggplot( filter( TopCarePaths.NotReq, organization_parent_name == "Avera McKennan Hospi" ) ,
-        aes(x = guide_item_id, y = total.view_count_sum ) ) +
-  geom_point() +
-  # facet_wrap(~organization_parent_name) +
-  ggtitle( 'Non-Required Card Popularity' ) +
-  theme_bw()
 
