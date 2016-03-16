@@ -7,11 +7,10 @@ library(ggthemes)
 library("plotly")
 # devtools::install_github("ropensci/plotly")
 
-
 Sys.setenv("plotly_username"="kidman007")
 Sys.setenv("plotly_api_key"="f6nspht8zn")
 
-setwd('/Users/andrewkraemer/Google\ Drive/WB\ -\ Analytics/State\ of\ the\ Patient/January/CarePathAnalysis/RProject')
+setwd('/Users/andrewkraemer/Google\ Drive/WB\ -\ Analytics/Projects/R/CarePathViz')
 source("LookRApiCredentials.R")
 
 looker_setup(   id = IdLookR,
@@ -20,32 +19,10 @@ looker_setup(   id = IdLookR,
 )
 
 # Starting Look || pulls from "CareCardSummaryTidy" Look
-TCP <- run_look(442)
-
-# V1 only has the following clients: UW, Virtua, Avera, & Meriter; additional aggregation (date?) required for additional CarePaths
-# Make sure to bind the duplicated virtua
-
-# bind manual tags --------------------------------------------------------
-
-ManualTagRef <- read.csv(file="RTagReference.csv",head=TRUE,sep=",")
-ManualTagRef <- ManualTagRef %>%
-  select(guide_item_id = Care.Cards.Guide.Item.ID, Logic) %>%
-  mutate(guide_item_id = as.numeric(as.character(guide_item_id)))
-
-FunctionalComponentTbl <- read.csv(file="RTagReference2.csv",head=TRUE,sep=",")
-FunctionalComponentTbl <- FunctionalComponentTbl %>%
-  select(title = CareCardName,
-         FunctionalComponent) %>%
-  filter(!is.na(title),
-         title != "") %>%
-  mutate(FunctionalComponent = as.character(FunctionalComponent),
-         FunctionalComponent = ifelse(FunctionalComponent == 'Report'
-                                      , 'Form', FunctionalComponent ),
-         title = as.character(title)
-  )
+TCP <- run_look(602)
 
 TopCarePaths <- tbl_df(TCP) # so I don't have to rerun the look everytime
-TopCarePaths <- as.data.frame(as.matrix(TopCarePaths),stringsAsFactors=F)
+TopCarePaths <- as.data.frame(as.matrix(TopCarePaths),stringsAsFactors = F)
 
 # Looker name and data type clean up --------------------------------------------------------
 # Renaming CarePaths Sanely
