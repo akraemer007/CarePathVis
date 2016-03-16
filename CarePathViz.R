@@ -27,9 +27,15 @@ TopCarePaths <- as.data.frame(as.matrix(TopCarePaths),stringsAsFactors = F)
 # Looker name and data type clean up --------------------------------------------------------
 # Renaming CarePaths Sanely
 # how do i do this as a loop?
+
+names(TopCarePaths2) <- gsub("care_cards.", "", names(TopCarePaths), fixed = TRUE)
+names(TopCarePaths2) <- gsub("patient_information.", "", names(TopCarePaths), fixed = TRUE)
+names(TopCarePaths2) <- gsub("organization_tree.", "", names(TopCarePaths), fixed = TRUE)
+
 names(TopCarePaths) <- gsub("care_cards.", "", names(TopCarePaths), fixed = TRUE)
 names(TopCarePaths) <- gsub("patient_information.", "", names(TopCarePaths), fixed = TRUE)
 names(TopCarePaths) <- gsub("organization_tree.", "", names(TopCarePaths), fixed = TRUE)
+
 # Changing Factors to Numerics (Do this for all measures or the calculations won't work)
 # how do i do this as a loop?
 TopCarePaths$completed_sum <- as.numeric(as.character(TopCarePaths$completed_sum))
@@ -43,6 +49,9 @@ TopCarePaths$guide_item_rank_num <- as.numeric(as.character(TopCarePaths$guide_i
 # Setting levels with variables
 TopCarePaths$PrePostFlag <- factor(TopCarePaths$PrePostFlag, levels = c('Pre', 'Post'))
 TopCarePaths$is_form <- factor(TopCarePaths$is_form, levels = c('No','Yes'))
+
+unfactorize<-c("colA","colB")
+TopCarePaths2[,unfactorize]<-lapply(unfactorize, function(x) as.numeric(as.character(df[,x])))
 
 # Original Joining & cleaning --------------------------------------------------------
 TopCarePaths <- TopCarePaths %>%
