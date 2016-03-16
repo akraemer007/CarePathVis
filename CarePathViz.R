@@ -28,30 +28,27 @@ TopCarePaths <- as.data.frame(as.matrix(TopCarePaths),stringsAsFactors = F)
 # Renaming CarePaths Sanely
 # how do i do this as a loop?
 
-names(TopCarePaths2) <- gsub("care_cards.", "", names(TopCarePaths), fixed = TRUE)
-names(TopCarePaths2) <- gsub("patient_information.", "", names(TopCarePaths), fixed = TRUE)
-names(TopCarePaths2) <- gsub("organization_tree.", "", names(TopCarePaths), fixed = TRUE)
-
 names(TopCarePaths) <- gsub("care_cards.", "", names(TopCarePaths), fixed = TRUE)
 names(TopCarePaths) <- gsub("patient_information.", "", names(TopCarePaths), fixed = TRUE)
 names(TopCarePaths) <- gsub("organization_tree.", "", names(TopCarePaths), fixed = TRUE)
 
 # Changing Factors to Numerics (Do this for all measures or the calculations won't work)
-# how do i do this as a loop?
-TopCarePaths$completed_sum <- as.numeric(as.character(TopCarePaths$completed_sum))
-TopCarePaths$calc_appears_offset <- as.numeric(as.character(TopCarePaths$calc_appears_offset))
-TopCarePaths$completed_and_expired_sum <- as.numeric(as.character(TopCarePaths$completed_and_expired_sum))
-TopCarePaths$view_count_sum <- as.numeric(as.character(TopCarePaths$view_count_sum))
-TopCarePaths$unique_view_count <- as.numeric(as.character(TopCarePaths$unique_view_count))
-TopCarePaths$patient_care_path_count <- as.numeric(as.character(TopCarePaths$patient_care_path_count))
-TopCarePaths$guide_item_id <- as.numeric(as.character(TopCarePaths$guide_item_id))
-TopCarePaths$guide_item_rank_num <- as.numeric(as.character(TopCarePaths$guide_item_rank))
+
 # Setting levels with variables
+
+
+unfactorize<-c("completed_sum",
+               "calc_appears_offset",
+               "completed_and_expired_sum",
+               "view_count_sum",
+               "unique_view_count",
+               "patient_care_path_count",
+               "guide_item_id",
+               "guide_item_rank_num")
+TopCarePaths[,unfactorize]<-lapply(unfactorize, function(x) as.numeric(as.character(TopCarePaths[,x])))
+
 TopCarePaths$PrePostFlag <- factor(TopCarePaths$PrePostFlag, levels = c('Pre', 'Post'))
 TopCarePaths$is_form <- factor(TopCarePaths$is_form, levels = c('No','Yes'))
-
-unfactorize<-c("colA","colB")
-TopCarePaths2[,unfactorize]<-lapply(unfactorize, function(x) as.numeric(as.character(df[,x])))
 
 # Original Joining & cleaning --------------------------------------------------------
 TopCarePaths <- TopCarePaths %>%
