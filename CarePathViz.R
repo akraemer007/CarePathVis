@@ -32,9 +32,6 @@ names(TopCarePaths) <- gsub("care_cards\\.|patient_information\\.|organization_t
 
 # Changing Factors to Numerics (Do this for all measures or the calculations won't work)
 
-# Setting levels with variables
-
-
 unfactorize<-c("completed_sum",
                "calc_appears_offset",
                "completed_and_expired_sum",
@@ -42,9 +39,10 @@ unfactorize<-c("completed_sum",
                "unique_view_count",
                "patient_care_path_count",
                "guide_item_id",
-               "guide_item_rank_num")
+               "guide_item_rank")
 TopCarePaths[,unfactorize]<-lapply(unfactorize, function(x) as.numeric(as.character(TopCarePaths[,x])))
 
+# Setting levels with variables
 TopCarePaths$PrePostFlag <- factor(TopCarePaths$PrePostFlag, levels = c('Pre', 'Post'))
 TopCarePaths$is_form <- factor(TopCarePaths$is_form, levels = c('No','Yes'))
 
