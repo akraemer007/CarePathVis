@@ -40,7 +40,7 @@ unfactorize<-c("completed_sum",
                "patient_care_path_count",
                "guide_item_id",
                "guide_item_rank")
-TopCarePaths[,unfactorize]<-lapply(unfactorize, function(x) as.numeric(as.character(TopCarePaths[,x])))
+TopCarePaths[,unfactorize]<-lapply(unfactorize, function(x) as.numeric(as.character(TopCarePaths)[,x]))
 
 # Setting levels with variables
 TopCarePaths$PrePostFlag <- factor(TopCarePaths$PrePostFlag, levels = c('Pre', 'Post'))
@@ -64,29 +64,19 @@ TopCarePaths <- TopCarePaths %>%
          title_full = ifelse(
            substr(title_full,nchar(title_full)-1,nchar(title_full)) == ', ', title,
            title_full) #gets rid of title's with ", " at end
-  )
-
-
-
-# View( filter( TopCarePaths, organization_parent_name == "Virtua Health System" ))
-
-# Required Card Simplification --------------------------------------------------------
-TopCarePaths.Req <- TopCarePaths %>%  
-  filter(required == "Yes" ,
-         conditional_tag == "No"
   ) %>%
-  # select(-is_form,-due_offset,-appears_offset) %>%
   group_by(guide_item_id,
            organization_parent_name,
            guide_item_rank,
-           guide_item_rank_num,
            title_full,
            CardForm,
            PrePostFlag,
            FunctionalComponent,
            is_form,
            Logic,
-           calc_appears_offset
+           calc_appears_offset,
+           required,
+           conditional_tag
   )%>%
   summarise(total.completed_sum = sum(completed_sum),
             total.completed_and_expired_sum = sum(completed_and_expired_sum),
